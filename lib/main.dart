@@ -51,8 +51,26 @@ class _HomePageState extends State<HomePage> {
         routes: {
           '/daily': (context) => Page(child: DailyPage()),
           '/weekly': (context) => Page(child: WeeklyList()),
+          '/focus': (context) => FocusPage(),
         },
       ),
+    );
+  }
+}
+
+class FocusPage extends StatelessWidget {
+  const FocusPage({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: HaulColors.orange),
+        title: Text("Workday", style: TextStyle(color: Colors.black)),
+        backgroundColor: Colors.white,
+      ),
+      backgroundColor: HaulColors.orange,
+      body: Center(child: HaulCard()),
     );
   }
 }
@@ -111,7 +129,6 @@ class DailyPage extends StatelessWidget {
     return StoreConnector<WorkdayState, BuiltList<Workday>>(
       converter: (store) => store.state.workdayList,
       builder: (context, BuiltList<Workday> workdayList) {
-        // print(workdayList.length);
         return ListView.separated(
           padding: EdgeInsets.all(20),
           separatorBuilder: (context, index) => ListItemSeparator(),
@@ -123,15 +140,6 @@ class DailyPage extends StatelessWidget {
     );
   }
 }
-
-// class WeeklyPage extends StatelessWidget {
-//   const WeeklyPage({Key key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return WeeklyList();
-//   }
-// }
 
 class ListItemSeparator extends StatelessWidget {
   const ListItemSeparator({Key key}) : super(key: key);

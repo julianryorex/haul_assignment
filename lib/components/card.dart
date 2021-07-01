@@ -8,12 +8,17 @@ import 'package:haul_assignment/utilities.dart';
 import 'package:intl/intl.dart';
 
 class HaulCard extends StatelessWidget {
-  final Workday workday;
+  Workday workday;
 
-  const HaulCard({Key key, this.workday}) : super(key: key);
+  HaulCard({Key key, this.workday}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // if navigated from weekly summary page
+    if (this.workday == null) {
+      workday = ModalRoute.of(context).settings.arguments as Workday;
+    }
+
     return Container(
       padding: EdgeInsets.all(20),
       width: MediaQuery.of(context).size.width * 0.9,

@@ -1,6 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:haul_assignment/components/tags.dart';
 import 'package:haul_assignment/models/workday.dart';
 import 'package:haul_assignment/redux/workday_state.dart';
 import 'package:haul_assignment/services/payroll.dart';
@@ -85,6 +86,7 @@ class WeeklySeparator extends StatelessWidget {
                 ),
                 PayTag(pay: Payroll().getNetPay(totalMinutes)),
                 HoursTag(minutes: totalMinutes),
+                ComplianceTag(hours: Duration(minutes: totalMinutes.toInt()).inHours),
               ],
             ),
           ),
@@ -106,23 +108,26 @@ class WeeklyListItem extends StatelessWidget {
     final difference = parsedEndDate.difference(parsedStartDate);
     final totalMinutes = (difference.inMinutes - workday.offDutyDurationMs.inMinutes).toDouble();
 
-    return Center(
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.06,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _renderDates(),
-              PayTag(pay: Payroll().getNetPay(totalMinutes)),
-              HoursTag(minutes: totalMinutes),
-            ],
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(context, '/focus', arguments: workday),
+      child: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: MediaQuery.of(context).size.height * 0.06,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _renderDates(),
+                PayTag(pay: Payroll().getNetPay(totalMinutes)),
+                HoursTag(minutes: totalMinutes),
+              ],
+            ),
           ),
         ),
       ),
@@ -133,70 +138,5 @@ class WeeklyListItem extends StatelessWidget {
     final parsedStartDate = parseDate(workday.utcStartTime);
     String finalTime = formatDate(parsedStartDate);
     return Text('$finalTime', style: TextStyle(color: HaulColors.orange, fontSize: 16));
-  }
-}
-
-class PayTag extends StatelessWidget {
-  final double pay;
-
-  const PayTag({
-    Key key,
-    this.pay = 200,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 80,
-      height: 25,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: HaulColors.orange,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Center(
-          child: Text(
-        '\$${(pay).toStringAsFixed(2)}',
-        style: TextStyle(color: Colors.white),
-      )),
-    );
-  }
-}
-
-class HoursTag extends StatelessWidget {
-  final double minutes;
-  const HoursTag({Key key, this.minutes}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final hours = Duration(minutes: minutes.toInt()).inHours;
-    return Container(
-      width: 60,
-      height: 25,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: Colors.green,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Center(
-          child: Text(
-        '$hours Hrs',
-        style: TextStyle(color: Colors.white),
-      )),
-    );
   }
 }
