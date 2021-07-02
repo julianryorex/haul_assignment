@@ -26,6 +26,43 @@ class ComplianceTag extends StatelessWidget {
   final int hours;
   const ComplianceTag({Key key, this.hours}) : super(key: key);
 
+  void _onclick(BuildContext context) {
+    String modalDescription;
+    if (hours < 70 * 0.8) {
+      modalDescription = 'Under 70 hours of work this week.';
+    } else if (hours > 70 * 0.8 && hours < 70) {
+      modalDescription = 'Within 80% of 70 hours of work this week.';
+    } else {
+      modalDescription = 'Over 70 hours of work this week.';
+    }
+
+    modalDescription += '\n\nTotal Hours: $hours';
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: HaulColors.orange.withOpacity(0), // transparent
+            child: Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: Colors.white),
+                color: HaulColors.orange,
+              ),
+              height: MediaQuery.of(context).size.height * 0.12,
+              width: MediaQuery.of(context).size.height * 0.2,
+              child: Center(
+                  child: Text(
+                modalDescription,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white),
+              )),
+            ),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     IconData icon;
@@ -40,12 +77,16 @@ class ComplianceTag extends StatelessWidget {
       icon = Icons.warning_amber_sharp;
       color = Colors.red;
     }
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25),
-        color: color,
+
+    return GestureDetector(
+      onTap: () => _onclick(context),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25),
+          color: color,
+        ),
+        child: Icon(icon, color: Colors.white, size: 30),
       ),
-      child: Icon(icon, color: Colors.white, size: 30),
     );
   }
 }
